@@ -16,18 +16,18 @@ class Game:
         '  ___\n |   |\n O   |\n\\|/  |\n/    |\n   __|__',
         '  ___\n |   |\n O   |\n\\|/  |\n/\\   |\n   __|__'
     ]
-    word_pool = []
+    __word_pool = []
 
     def __init__(self, set) -> None:
-        self.word_pool = open('data/{}.txt'.format(set), 'r').readlines()
+        self.__word_pool = open('data/{}.txt'.format(set), 'r').readlines()
 
         i = 0
-        while i < len(self.word_pool):
-            self.word_pool[i] = self.word_pool[i].removesuffix('\n')
+        while i < len(self.__word_pool):
+            self.__word_pool[i] = self.__word_pool[i].removesuffix('\n')
             i += 1
 
-    def get_word(self) -> 'str':
-        return self.__word
+    def get_word_pool(self) -> 'list':
+        return self.__word_pool
 
     def __gen_guessed_parts(self, guessed_letter = ' ') -> None:
         if len(self.__correct_guesses) == 0 and self.__fail_count == 0:

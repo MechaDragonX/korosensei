@@ -1,21 +1,16 @@
 import discord
 import game
-import random
 
 class CommandHandler:
     # Command Prefix (ex: "!start")
     __prefix = '&'
     # A dictionary of command name to their help message
     __commands = {
-        'init': 'Initialize the game by deciding what set of words to use. The sets are: English',
+        'init': 'Initialize the game by deciding what set of words to use. The sets are: English, Japanese',
         'start': 'Play a game of hangman with Korosensei with English words! Save someone from being killed by him! Are you faster than a Mach 20 Monster!?',
-        'start-en': 'Play a game of hangman with Korosensei with English words! Save someone from being killed by him! Are you faster than a Mach 20 Monster!?',
-        # 'start-enja': 'Play a game of hangman with Korosensei with Japanese words! Save someone from being killed by him! Are you faster than a Mach 20 Monster!?',
-        # 'start-ja': '殺（ころ）せんせーとハングマンをやろう！ あいつから人（ひと）を助（たす）けろ！マッハ２０の怪物（かいぶつ）より速（はや）いのか！？',
-        # 'スタート': '殺（ころ）せんせーとハングマンをやろう！ あいつから人（ひと）を助（たす）けろ！マッハ２０の怪物（かいぶつ）より速（はや）いのか！？'
         'help': 'This very command!'
     }
-    __sets = [ 'english' ]
+    __sets = [ 'english', 'japanese' ]
     # The game
     __robespierre = None
 
@@ -42,13 +37,12 @@ class CommandHandler:
                 await self.__start_en(client, message)
         elif message.content.startswith(self.__prefix + 'help'):
             await self.__help(message)
-
     async def __inititalize(self, message, set = 'english') -> None:
         if self.__sets.count(set.lower()) == 0:
             return await message.channel.send('No set called "{}" exists!'.format(set))
         self.__robespierre = game.Game(set)
     async def __start_en(self, client, message) -> None:
-        if self.__robespierre.get_word() == '':
+        if len(self.__robespierre.get_word_pool()) == 0:
             await message.channel.send('No words have been added to the word pool!')
         else:
             await self.__robespierre.game_loop(client, message)
