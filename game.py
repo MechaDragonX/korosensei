@@ -16,10 +16,21 @@ class Game:
         '  ___\n |   |\n O   |\n\\|/  |\n/    |\n   __|__',
         '  ___\n |   |\n O   |\n\\|/  |\n/\\   |\n   __|__'
     ]
+    # 0 = English, 1 = Japanese
+    __language = 0
     __word_pool = []
+    __word_pool_kanji = []
 
     def __init__(self, set) -> None:
-        self.__word_pool = open('data/{}.txt'.format(set), 'r').readlines()
+        lines = []
+        if set != 'english':
+            self.__language = 1
+            lines = open('data/{}.txt'.format(set), 'r').readlines()
+            for line in lines:
+                self.__word_pool.append(line.split()[0])
+                self.__word_pool_kanji.append(line.split()[1])
+        else:
+            self.__word_pool = open('data/{}.txt'.format(set), 'r').readlines()
 
         i = 0
         while i < len(self.__word_pool):
@@ -79,11 +90,22 @@ class Game:
     async def __end_game(self, message) -> 'bool':
         if self.__fail_count == 6:
             await self.__print_game_field(message)
-            await message.channel.send('Game Over!\nThe correct word was: {}'.format(self.__word))
+            if self.__language == 0:
+                await message.channel.send('Game Over!\nThe correct word was: {}'.format(self.__word))
+            else:
+                # Find the Kanji of the word by the finding the index of the Kana in the word pool list, and then using that index to get the Kanji
+                await message.channel.send('Game Over!\nThe correct word was: {}'.format(self.__word_pool_kanji[self.__word_pool.index(self.__word)]))
             return True
         elif self.__word == ''.join(map(str, self.__correct_guesses)):
             await self.__print_game_field(message)
-            await message.channel.send('You Win!\nIt took you {} guesses!'.format(len(self.__correct_guesses) + self.__fail_count))
+            if self.__language == 0:
+                await message.channel.send('You Win!\nIt took you {} guesses!'.format(len(self.__correct_guesses) + self.__fail_count))
+            else:
+                # Find the Kanji of the word by the finding the index of the Kana in the word pool list, and then using that index to get the Kanji
+                await message.channel.send('You Win!\nThe word was: {0}. It took you {1} guesses!'.format(
+                    self.__word_pool_kanji[self.__word_pool.index(self.__word)],
+                    len(self.__correct_guesses) + self.__fail_count
+                ))
             return True
         return False
     async def game_loop(self, client, message) -> None:
