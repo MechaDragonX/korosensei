@@ -1,5 +1,6 @@
-import asyncio
+# import asyncio
 import discord
+import random
 
 class Game:
     __correct_guesses = []
@@ -15,10 +16,18 @@ class Game:
         '  ___\n |   |\n O   |\n\\|/  |\n/    |\n   __|__',
         '  ___\n |   |\n O   |\n\\|/  |\n/\\   |\n   __|__'
     ]
+    word_pool = []
 
-    def __init__(self, word) -> None:
-        self.__word = word
-        self.__gen_guessed_parts()
+    def __init__(self, set) -> None:
+        self.word_pool = open('data/{}.txt'.format(set), 'r').readlines()
+
+        i = 0
+        while i < len(self.word_pool):
+            self.word_pool[i] = self.word_pool[i].removesuffix('\n')
+            i += 1
+
+    def get_word(self) -> 'str':
+        return self.__word
 
     def __gen_guessed_parts(self, guessed_letter = ' ') -> None:
         if len(self.__correct_guesses) == 0 and self.__fail_count == 0:
@@ -82,6 +91,10 @@ class Game:
         can_exit_round = False
         guess_status = -1
         game_status = False
+
+        # Setup game
+        self.__word = self.__word_pool[random.randint(0, len(self.__word_pool) - 1)]
+        self.__gen_guessed_parts()
 
         while True:
             await self.__print_game_field(message)
