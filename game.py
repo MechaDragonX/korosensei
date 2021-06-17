@@ -33,30 +33,30 @@ class Game:
                     self.__correct_guesses[i] = guessed_letter
                 i += 1
     async def __print_game_field(self, message) -> None:
-        message_to_send = ''
+        message_connect = ''
         await message.channel.send('```\n{}```'.format(self.__gallow_states[self.__fail_count]))
 
         i = 0
         while i < len(self.__correct_guesses):
             if self.__correct_guesses[i] == ' ':
-                message_to_send += '\_'
+                message_connect += '\_'
             else:
-                message_to_send += self.__correct_guesses[i]
+                message_connect += self.__correct_guesses[i]
             if i != len(self.__correct_guesses) - 1:
-                message_to_send += ' '
+                message_connect += ' '
             i += 1
-        await message.channel.send(message_to_send)
+        await message.channel.send(message_connect)
 
         if len(self.__wrong_guesses) != 0:
-            message_to_send = ''
+            message_connect = ''
             i = 0
             while i < len(self.__wrong_guesses):
                 if i == len(self.__wrong_guesses) - 1:
-                    message_to_send += self.__wrong_guesses[i]
+                    message_connect += self.__wrong_guesses[i]
                 else:
-                    message_to_send += '{} '.format(self.__wrong_guesses[i])
+                    message_connect += '{} '.format(self.__wrong_guesses[i])
                 i += 1
-            await message.channel.send(message_to_send)
+            await message.channel.send(message_connect)
     def __check(self, letter) -> 'int':
         if letter not in self.__word:
             self.__wrong_guesses.append(letter)
