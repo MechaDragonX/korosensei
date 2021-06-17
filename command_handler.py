@@ -21,18 +21,18 @@ class CommandHandler:
         return self.__commands
 
     # Check if the message starts with a command and then execute that command
-    async def handle(self, message) -> None:
+    async def handle(self, client, message) -> None:
         if message.content.startswith(self.__prefix + 'start') or message.content.startswith(self.__prefix + 'start-en'):
-            await self.__start_en(message)
+            await self.__start_en(client, message)
         # elif message.content.startswith(self.__prefix + 'start-enja'):
         #     await self.__start_enja(message)
         # elif message.content.startswith(self.__prefix  + 'start-ja') or message.content.startswith(self.__prefix + 'スタート'):
         #     await self.__start_ja(message)
 
 
-    async def __start_en(self, message) -> None:
+    async def __start_en(self, client, message) -> None:
         robespierre = game.Game('disjointed')
-        await robespierre.game_loop(message)
+        await robespierre.game_loop(client, message)
     # async def __start_enja(self, message) -> None:
     #     pass
     # async def __start_ja(self, message) -> None:
