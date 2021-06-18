@@ -37,6 +37,12 @@ class Game:
             self.__word_pool[i] = self.__word_pool[i].removesuffix('\n')
             i += 1
 
+        if len(self.__word_pool_kanji) != 0:
+            i = 0
+            while i < len(self.__word_pool_kanji):
+                self.__word_pool_kanji[i] = self.__word_pool_kanji[i].removesuffix('\n') 
+                i += 1
+
     def get_word_pool(self) -> 'list':
         return self.__word_pool
 
