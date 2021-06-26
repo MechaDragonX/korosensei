@@ -142,3 +142,6 @@ info.txt
 
 # Data folder for word sets
 data/
+
+# .idea folder for PyCharm
+.idea/
