@@ -9,11 +9,11 @@ class CommandHandler:
     __prefix = '&'
     # A dictionary of command name to their help message
     __commands = {
-        'init': 'Initialize the game by deciding what set of words to use. The sets are: English, JLPT N5 (just type N5). Usage: `{}init <set name>`. If a set name is not provided, English will selected.'.format(__prefix),
+        'init': 'Initialize the game by deciding what set of words to use. The sets are: English, JLPT N5 (just type N5), JLPT N4 (just type N4), JLPT N3 (just type N3), JLPT N2 (just type N2), JLPT N1 (just type N1). Usage: `{}init <set name>`. If a set name is not provided, English will selected.'.format(__prefix),
         'start': 'Play a game of hangman with Korosensei with English words! Save someone from being killed by him! Are you faster than a Mach 20 Monster!? Usage: `{}start`'.format(__prefix),
         'help': 'This very command! Usage: `{}help'.format(__prefix)
     }
-    __sets = [ 'english', 'n5' ]
+    __sets = [ 'english', 'n5', 'n4', 'n3', 'n2', 'n1' ]
     # The game
     __robespierre = None
 
