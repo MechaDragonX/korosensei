@@ -243,4 +243,7 @@ class Game:
 
             game_status = await self.__end_game(message)
             if game_status:
+                self.__fail_count = 0
+                self.__correct_guesses = []
+                self.__wrong_guesses = []
                 return
