@@ -51,7 +51,7 @@ class CommandHandler:
         else:
             await self.__robespierre.game_loop(client, message)
     async def __help(self, message) -> None:
-        message_content = ''
+        message_content = 'How to start a game:\n1. Initialize the game with a set. See the info on `{0}init` for more details.\n2. Start the game with `{0}start`\n3. Have fun!\n\nCommand List:\n'.format(self.__prefix)
         for item in self.__commands.items():
             message_content += '{0}{1}: {2}\n'.format(self.__prefix, item[0], item[1])
         # Remove the extraneous new line character

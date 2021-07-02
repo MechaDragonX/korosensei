@@ -11,6 +11,7 @@ class KoroClient(discord.Client):
     token = info_file[0]
 
     async def on_ready(self) -> None:
+        await client.change_presence(activity=discord.Game('Type {}help for help! Nurufufufu~!'.format(self.handler.get_prefix())))
         print('Agents are go!')
     async def on_message(self, message) -> None:
         # Prevent bot from messaging himself
