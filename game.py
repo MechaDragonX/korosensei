@@ -156,19 +156,19 @@ class Game:
         if self.__language == Language.Japanese:
             letter = self.__convert_kana_type(letter)
 
+        # If the letter was already guessed
+        if letter in self.__correct_guesses or letter in self.__wrong_guesses:
+            return 2
         # If the letter is not in the word, add it to the wrong guesses and increment the fail count
-        if letter not in self.__word:
+        elif letter not in self.__word:
             self.__wrong_guesses.append(letter)
             return 1
-        # If the letter was already guessed
-        elif letter in self.__correct_guesses:
-            return 2
         # Otherwise, simply generate guessed parts again with the newly guessed letter
         else:
             self.__gen_guessed_parts(letter)
             return 0
     def __convert_kana_type(self, letter) -> 'str':
-        # Determine the kana type of the guess by searching the dictinoary
+        # Determine the kana type of the guess by searching the dictionary
         guess_kana_type = KanaType.Hiragana if letter in self.__hira2kata.keys() else KanaType.Katakana
 
         # Create a separate variable for the same guess in the opposite kana type
