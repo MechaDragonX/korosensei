@@ -18,7 +18,7 @@ class Game:
     __correct_guesses = []
     __wrong_guesses = []
     __word = ''
-    __fail_count = 0
+    __guess_count = 0
     __gallow_states = [
         '  ___\n |   |\n     |\n     |\n     |\n   __|__',
         '  ___\n |   |\n O   |\n     |\n     |\n   __|__',
@@ -115,7 +115,7 @@ class Game:
                 if (char in self.__extra_hira2kata.keys()) or (char in self.__extra_hira2kata.values()):
                     self.__gen_guessed_parts(char)
     def __gen_guessed_parts(self, guessed_letter = ' ') -> None:
-        if len(self.__correct_guesses) == 0 and self.__fail_count == 0:
+        if len(self.__correct_guesses) == 0 and len(self.__wrong_guesses) == 0:
             i = 0
             while i < len(self.__word):
                 self.__correct_guesses.append(' ')
@@ -128,7 +128,7 @@ class Game:
                 i += 1
     async def __print_game_field(self, message) -> None:
         message_connect = ''
-        await message.channel.send('```\n{}```'.format(self.__gallow_states[self.__fail_count]))
+        await message.channel.send('```\n{}```'.format(self.__gallow_states[len(self.__wrong_guesses)]))
 
         i = 0
         while i < len(self.__correct_guesses):
@@ -159,7 +159,6 @@ class Game:
         # If the letter is not in the word, add it to the wrong guesses and increment the fail count
         if letter not in self.__word:
             self.__wrong_guesses.append(letter)
-            self.__fail_count = len(self.__wrong_guesses)
             return 1
         # If the letter was already guessed
         elif letter in self.__correct_guesses:
@@ -188,7 +187,7 @@ class Game:
 
         return letter
     async def __end_game(self, message) -> 'bool':
-        if self.__fail_count == 6:
+        if len(self.__wrong_guesses) == 6:
             await self.__print_game_field(message)
             if self.__language == Language.English:
                 await message.channel.send('Game Over!\nThe correct word was: {}'.format(self.__word))
@@ -199,12 +198,12 @@ class Game:
         elif self.__word == ''.join(map(str, self.__correct_guesses)):
             await self.__print_game_field(message)
             if self.__language == Language.English:
-                await message.channel.send('You Win!\nIt took you {} guesses!'.format(len(self.__correct_guesses) + self.__fail_count))
+                await message.channel.send('You Win!\nIt took you {} guesses!'.format(self.__guess_count))
             else:
                 # Find the Kanji of the word by the finding the index of the Kana in the word pool list, and then using that index to get the Kanji
                 await message.channel.send('You Win!\nThe word was: {0}. It took you {1} guesses!'.format(
                     self.__word_pool_kanji[self.__word_pool.index(self.__word)],
-                    len(self.__correct_guesses) + self.__fail_count
+                    self.__guess_count
                 ))
             return True
         return False
@@ -232,9 +231,11 @@ class Game:
                     guess_status = self.__check(input_message.content[0])
                     if guess_status == 0:
                         can_exit_round = True
+                        self.__guess_count += 1
                     elif guess_status == 1:
                         await message.channel.send('\nThat letter doesn\'t exist!')
                         can_exit_round = True
+                        self.__guess_count += 1
                     else:
                         await message.channel.send('\nYou already guessed that letter!')
 
@@ -243,7 +244,6 @@ class Game:
 
             game_status = await self.__end_game(message)
             if game_status:
-                self.__fail_count = 0
                 self.__correct_guesses = []
                 self.__wrong_guesses = []
                 return
