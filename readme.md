@@ -30,4 +30,4 @@ Check the [issues](https://github.com/MechaDragonX/korosensei/issues) tab for an
 ## What the hell is this name?
 The manga and anime franchise *Assassination Classroom* (暗殺教室, Ansatsu Kyoushitsu) features a character by the name of Korosensei (殺せんせー) who's name roughly means "unkillable teacher". The students of the titular classroom are tasked with killing their teacher before the end of the year, and their gradutation from middle school, lest the Earth faces the same fate as the moon. Utterly destroyed. While the premise makes this sound like an utterly ridiculous action story, it is in fact a very heartfelt character-driven story focusing on the relationship between the students, the students and their teacher, and their growth as people until their symbolic growth into adults with graduation from Japanese compulsory education.
 
-You can think of the game as being Korosensei about to kill someone as a test of your ability to catch the Macch 20 being.
+You can think of the game as being Korosensei about to kill someone as a test of your ability to catch the Mach 20 being.
