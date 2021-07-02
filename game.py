@@ -60,6 +60,8 @@ class Game:
     }
 
     def __init__(self, set) -> None:
+        self.__correct_guesses = []
+        self.__wrong_guesses = []
         # Fill the word pool
         lines = []
         # If set's language is not English, fill the main word pool and Kanji word pools
@@ -244,6 +246,10 @@ class Game:
 
             game_status = await self.__end_game(message)
             if game_status:
+                self.__guess_count = 0
                 self.__correct_guesses = []
                 self.__wrong_guesses = []
+                self.__word = ''
+                self.__kana_type = KanaType.English
+                self.__language = Language.English
                 return
