@@ -1,26 +1,20 @@
 #!/usr/bin/env python
 
-import discord
+import hikari
 import command_handler
 
-class KoroClient(discord.Client):
-    handler = command_handler.CommandHandler()
-    # Read info file to get any special information
-    info_file = open('info.txt', 'r').readlines()
-    # Read the first line to get the client token
-    token = info_file[0]
+# Read info file to get any special information
+info_file = open('info.txt', 'r').readlines()
+# Read the first line to get the client token
+bot = hikari.GatewayBot(token=info_file[0].strip())
 
-    async def on_ready(self) -> None:
-        await client.change_presence(activity=discord.Game('Type {}help for help! Nurufufufu~!'.format(self.handler.get_prefix())))
-        print('Agents are go!')
-    async def on_message(self, message) -> None:
-        # Prevent bot from messaging himself
-        if message.author == self.user:
-            return
+handler = command_handler.CommandHandler()
 
-        # Use CommandHandler class to handle all other messages
-        await self.handler.handle(self, message)
+@bot.listen()
+async def ping(event: hikari.GuildMessageCreateEvent) -> None:
+    if event.is_bot or not event.content:
+        return
+    # use CommandHandler class to handle all other messages
+    await handler.handle(bot, event.message)
 
-# Run bot
-client = KoroClient()
-client.run(client.token)
+bot.run()

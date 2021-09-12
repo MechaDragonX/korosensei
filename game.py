@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # import asyncio
-import discord
+import hikari
 import enum
 import random
 
@@ -130,7 +130,7 @@ class Game:
                 i += 1
     async def __print_game_field(self, message) -> None:
         message_connect = ''
-        await message.channel.send('```\n{}```'.format(self.__gallow_states[len(self.__wrong_guesses)]))
+        await message.respond('```\n{}```'.format(self.__gallow_states[len(self.__wrong_guesses)]))
 
         i = 0
         while i < len(self.__correct_guesses):
@@ -141,7 +141,7 @@ class Game:
             if i != len(self.__correct_guesses) - 1:
                 message_connect += ' '
             i += 1
-        await message.channel.send(message_connect)
+        await message.respond(message_connect)
 
         if len(self.__wrong_guesses) != 0:
             message_connect = ''
@@ -152,7 +152,7 @@ class Game:
                 else:
                     message_connect += '{} '.format(self.__wrong_guesses[i])
                 i += 1
-            await message.channel.send(message_connect)
+            await message.respond(message_connect)
     def __check(self, letter) -> 'int':
         # If the language is Japanese, change the guess to the kana type of the word if necessary
         if self.__language == Language.Japanese:
@@ -192,24 +192,24 @@ class Game:
         if len(self.__wrong_guesses) == 6:
             await self.__print_game_field(message)
             if self.__language == Language.English:
-                await message.channel.send('Game Over!\nThe correct word was: {}'.format(self.__word))
+                await message.respond('Game Over!\nThe correct word was: {}'.format(self.__word))
             else:
                 # Find the Kanji of the word by the finding the index of the Kana in the word pool list, and then using that index to get the Kanji
-                await message.channel.send('Game Over!\nThe correct word was: {}'.format(self.__word_pool_kanji[self.__word_pool.index(self.__word)]))
+                await message.respond('Game Over!\nThe correct word was: {}'.format(self.__word_pool_kanji[self.__word_pool.index(self.__word)]))
             return True
         elif self.__word == ''.join(map(str, self.__correct_guesses)):
             await self.__print_game_field(message)
             if self.__language == Language.English:
-                await message.channel.send('You Win!\nIt took you {} guesses!'.format(self.__guess_count))
+                await message.respond('You Win!\nIt took you {} guesses!'.format(self.__guess_count))
             else:
                 # Find the Kanji of the word by the finding the index of the Kana in the word pool list, and then using that index to get the Kanji
-                await message.channel.send('You Win!\nThe word was: {0}. It took you {1} guesses!'.format(
+                await message.respond('You Win!\nThe word was: {0}. It took you {1} guesses!'.format(
                     self.__word_pool_kanji[self.__word_pool.index(self.__word)],
                     self.__guess_count
                 ))
             return True
         return False
-    async def game_loop(self, client, message) -> None:
+    async def game_loop(self, bot, message) -> None:
         input_message = ''
         can_exit_round = False
         guess_status = -1
@@ -220,26 +220,27 @@ class Game:
         while True:
             await self.__print_game_field(message)
             while not can_exit_round:
-                await message.channel.send('Please type a letter:')
+                await message.respond('Please type a letter:')
 
                 try:
-                    input_message = await client.wait_for('message')
-                except Exception:   
-                    return await message.channel.send('Sorry, something went wrong!')
+                    input_message = await bot.wait_for(hikari.GuildMessageCreateEvent, None)
+                except Exception as e:   
+                    await message.respond('Sorry, something went wrong!')
+                    return await message.respond(str(e))
 
                 if len(input_message.content) != 1:
-                    await message.channel.send('\nPlease type just a single letter!')
+                    await message.respond('\nPlease type just a single letter!')
                 else:
                     guess_status = self.__check(input_message.content[0])
                     if guess_status == 0:
                         can_exit_round = True
                         self.__guess_count += 1
                     elif guess_status == 1:
-                        await message.channel.send('\nThat letter doesn\'t exist!')
+                        await message.respond('\nThat letter doesn\'t exist!')
                         can_exit_round = True
                         self.__guess_count += 1
                     else:
-                        await message.channel.send('\nYou already guessed that letter!')
+                        await message.respond('\nYou already guessed that letter!')
 
             can_exit_round = False
             guess_status = -1
