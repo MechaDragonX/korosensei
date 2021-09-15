@@ -15,6 +15,12 @@ class KanaType(enum.Enum):
     Katakana = 1
 
 class Game:
+    # Color of main embeds; Korosensei's color
+    __koro_color = hikari.Color(0xfff46c)
+    # Success color
+    __success_color = hikari.Color(0x00ff7f)
+    # Color of error embeds
+    __error_color = hikari.Color(0xff4040)
     __correct_guesses = []
     __wrong_guesses = []
     __word = ''
@@ -131,7 +137,7 @@ class Game:
                 i += 1
     async def __print_game_field(self, message) -> None:
         message_connect = ''
-        await message.respond('```\n{}```'.format(self.__gallow_states[len(self.__wrong_guesses)]))
+        await message.respond(hikari.Embed(description='```\n{}```'.format(self.__gallow_states[len(self.__wrong_guesses)]), color=self.__koro_color))
 
         i = 0
         while i < len(self.__correct_guesses):
@@ -142,7 +148,7 @@ class Game:
             if i != len(self.__correct_guesses) - 1:
                 message_connect += ' '
             i += 1
-        await message.respond(message_connect)
+        await message.respond(hikari.Embed(description=message_connect, color=self.__koro_color))
 
         if len(self.__wrong_guesses) != 0:
             message_connect = ''
@@ -153,7 +159,7 @@ class Game:
                 else:
                     message_connect += '{} '.format(self.__wrong_guesses[i])
                 i += 1
-            await message.respond(message_connect)
+            await message.respond(hikari.Embed(description=message_connect, color=self.__koro_color))
     def __check(self, letter) -> 'int':
         # If the language is Japanese, change the guess to the kana type of the word if necessary
         if self.__language == Language.Japanese:
@@ -193,21 +199,21 @@ class Game:
         if len(self.__wrong_guesses) == 6:
             await self.__print_game_field(message)
             if self.__language == Language.English:
-                await message.respond('Game Over!\nThe correct word was: {}'.format(self.__word))
+                await message.respond(hikari.Embed(title='Game Over!', description='The correct word was: {}'.format(self.__word), color=self.__error_color))
             else:
                 # Find the Kanji of the word by the finding the index of the Kana in the word pool list, and then using that index to get the Kanji
-                await message.respond('Game Over!\nThe correct word was: {}'.format(self.__word_pool_kanji[self.__word_pool.index(self.__word)]))
+                await message.respond(hikari.Embed(title='Game Over!', description='The correct word was: {}'.format(self.__word_pool_kanji[self.__word_pool.index(self.__word)]), color=self.__error_color))
             return True
         elif self.__word == ''.join(map(str, self.__correct_guesses)):
             await self.__print_game_field(message)
             if self.__language == Language.English:
-                await message.respond('You Win!\nIt took you {} guesses!'.format(self.__guess_count))
+                await message.respond(hikari.Embed(title='You Win!', description='It took you {} guesses!'.format(self.__guess_count), color=self.__success_color))
             else:
                 # Find the Kanji of the word by the finding the index of the Kana in the word pool list, and then using that index to get the Kanji
-                await message.respond('You Win!\nThe word was: {0}. It took you {1} guesses!'.format(
+                await message.respond(hikari.Embed(title='You Win!', description='The word was: {0}. It took you {} guesses!'.format(
                     self.__word_pool_kanji[self.__word_pool.index(self.__word)],
                     self.__guess_count
-                ))
+                ), color=self.__success_color))
             return True
         return False
     async def game_loop(self, bot, message) -> None:
@@ -221,27 +227,27 @@ class Game:
         while True:
             await self.__print_game_field(message)
             while not can_exit_round:
-                await message.respond('Please type a letter:')
+                await message.respond(hikari.Embed(title='Please type a letter', color=self.__koro_color))
 
                 try:
                     input_message = await bot.wait_for(hikari.GuildMessageCreateEvent, None)
-                except Exception as e:   
-                    await message.respond('Sorry, something went wrong!')
-                    return await message.respond(str(e))
+                except Exception as e:
+                    await message.respond(hikari.Embed(title='Sorry, something went wrong!', description='Please report the following error to the dev!', color=self.__error_color))
+                    await message.respond(hikari.Embed(description=str(e), color=self.__error_color))
 
                 if len(input_message.content) != 1:
-                    await message.respond('\nPlease type just a single letter!')
+                    await message.respond(hikari.Embed(title='Please type just a single letter!', color=self.__error_color))
                 else:
                     guess_status = self.__check(input_message.content[0])
                     if guess_status == 0:
                         can_exit_round = True
                         self.__guess_count += 1
                     elif guess_status == 1:
-                        await message.respond('\nThat letter doesn\'t exist!')
+                        await message.respond(hikari.Embed(title='That letter doesn\'t exist!', color=self.__error_color))
                         can_exit_round = True
                         self.__guess_count += 1
                     else:
-                        await message.respond('\nYou already guessed that letter!')
+                        await message.respond(hikari.Embed(title='You already guessed that letter!', color=self.__error_color))
 
             can_exit_round = False
             guess_status = -1
