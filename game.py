@@ -56,7 +56,8 @@ class Game:
     }
     # A seperate dictionary for Sokuon/Yoon (extra sounds with smaller characters) and long tone mark
     __extra_hira2kata = {
-        'っ': 'ッ', 'ゃ': 'ャ', 'ゅ': 'ュ', 'ょ': 'ョ', 'ー': 'ー'
+        'っ': 'ッ', 'ゃ': 'ャ', 'ゅ': 'ュ', 'ょ': 'ョ', 'ー': 'ー',
+        'ぁ': 'ァ', 'ぃ':'ィ', 'ぅ':'ゥ', 'ぇ':'ェ', 'ぉ':'ォ'
     }
 
     def __init__(self, set) -> None:
